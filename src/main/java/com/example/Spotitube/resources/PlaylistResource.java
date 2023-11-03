@@ -8,6 +8,7 @@ import com.example.Spotitube.resources.interfaces.ILoginService;
 import com.example.Spotitube.resources.interfaces.IPlaylistService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -44,14 +45,14 @@ public class PlaylistResource {
     }
 
     @DeleteMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<PlaylistResponseDTO> deletePlaylist(@PathParam("id") int id, @RequestParam("token") String token) {
+    public ResponseEntity<PlaylistResponseDTO> deletePlaylist(@PathVariable("id") int id, @RequestParam("token") String token) {
         loginService.verifyToken(token);
         playlistService.deletePlaylist(id);
         return ResponseEntity.status(HttpStatus.OK).body(playlistService.getAllPlaylists(loginService.getUserID(token)));
     }
 
     @GetMapping(value = "/{id}/tracks", produces = "application/json")
-    public ResponseEntity<TrackResponseDTO> getTracksFromPlaylist(@PathParam("id") int id, @RequestParam("token") String token) {
+    public ResponseEntity<TrackResponseDTO> getTracksFromPlaylist(@PathVariable("id") int id, @RequestParam("token") String token) {
         loginService.verifyToken(token);
         return ResponseEntity.status(HttpStatus.OK).body(playlistService.getTracksPerPlaylist(id));
     }
@@ -64,7 +65,7 @@ public class PlaylistResource {
     }
 
     @DeleteMapping(value = "/{id}/tracks/{trackId}", produces = "application/json")
-    public ResponseEntity<TrackResponseDTO> removeTrackFromPlaylist(@PathParam("id") int playlistId, @PathParam("trackId") int trackId, @RequestParam("token") String token) {
+    public ResponseEntity<TrackResponseDTO> removeTrackFromPlaylist(@PathVariable("id") int playlistId, @PathVariable("trackId") int trackId, @RequestParam("token") String token) {
         loginService.verifyToken(token);
         playlistService.removeTrackFromPlaylist(trackId, playlistId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(playlistService.getTracksPerPlaylist(playlistId));
